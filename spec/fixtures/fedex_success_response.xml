@@ -70,5 +70,11 @@
             <CountryCode>US</CountryCode>
          </Address>
       </Event>
+      <Event>
+        <Date>2011-11-01</Date>
+        <Time>00:36:08</Time>
+        <Type>OC</Type>
+        <Description>Shipment information sent to FedEx</Description>
+      </Event>
    </Package>
 </FDXTrack2Reply>

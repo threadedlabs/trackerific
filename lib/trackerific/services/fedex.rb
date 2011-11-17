@@ -52,10 +52,17 @@ module Trackerific
         date = Time.parse("#{e["Date"]} #{e["Time"]}")
         desc = e["Description"]
         addr = e["Address"]
+
+        if addr
+          location = "#{addr['City']}, #{addr["StateOrProvinceCode"]} #{addr["PostalCode"]} #{addr['CountryCode']}"
+        else
+          location = 'Unknown'
+        end
+
         events << Trackerific::Event.new(
           :date         => date,
           :description  => desc,
-          :location     => "#{addr["StateOrProvinceCode"]} #{addr["PostalCode"]}"
+          :location     => location
         )
       end
       # Return a Trackerific::Details containing all the events
