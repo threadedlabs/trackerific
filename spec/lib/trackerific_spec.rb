@@ -28,6 +28,11 @@ describe Trackerific do
       subject { tracking_service "1Z12345E0291980793" }
       it { should be Trackerific::UPS}
     end
+
+    context "when given a space formatted USPS" do
+      subject { tracking_service "9102 9010 0134 3104 0819 19" }
+      it { should be Trackerific::USPS }
+    end
     
     context "when given a USPS tracking number" do
       subject { tracking_service "EJ958083578US" }

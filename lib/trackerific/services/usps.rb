@@ -17,7 +17,10 @@ module Trackerific
       # @return [Array, Regexp] the regular expression
       # @api private
       def package_id_matchers
-        [ /^E\D{1}\d{9}\D{2}$|^9\d{15,21}$/ ]
+        [ 
+          /^E\D{1}\d{9}\D{2}$|^9\d{15,21}$/,
+          /^\d{4}\s\d{4}\s\d{4}\s\d{4}\s\d{4}\s\d{2}$/
+        ]
       end    
       
       # The required parameters for tracking a UPS package
