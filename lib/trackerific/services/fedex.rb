@@ -14,7 +14,7 @@ module Trackerific
       # @return [Array, Regexp] the regular expression
       # @api private
       def package_id_matchers
-        [ /^[0-9]{15}$/ ]
+        [ /^[0-9]{15}$/, /^[0-9]{12}/ ]
       end
       
       # Returns an Array of required parameters used when creating a new instance

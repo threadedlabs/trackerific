@@ -34,8 +34,13 @@ describe Trackerific do
       it { should be Trackerific::USPS }
     end
     
-    context "when given a FedEx tracking number" do
+    context "when given a FedEx express tracking number" do
       subject { tracking_service "183689015000001" }
+      it { should be Trackerific::FedEx }
+    end
+
+    context "when given a FedEx ground tracking number" do
+      subject { tracking_service "491428716545" }
       it { should be Trackerific::FedEx }
     end
     
