@@ -4,14 +4,9 @@ class TestService < Trackerific::Service
   def self.tracks?(number)
     number == 'test-tracking-number'
   end
-
-  def track
-    true
-  end
 end
 
 describe Trackerific::Service do
-
   describe "Service.config" do
     it "should use the class name to look up the configuration" do
       Trackerific.configuration.should_receive(:test_service)
@@ -38,5 +33,4 @@ describe Trackerific::Service do
       subject.track 'test-tracking-number'
     end
   end
-
 end

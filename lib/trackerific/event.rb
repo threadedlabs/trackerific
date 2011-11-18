@@ -36,21 +36,5 @@ module Trackerific
     def location
       @location
     end
-
-    # Converts the event into a string
-    # @example Get a human-readable string from an event
-    #   event = details.event.to_s
-    # @example A bulleted list of events in haml
-    #   %ul
-    #     - details.events.each do |event|
-    #     %li= event
-    # @return [String] converts the event into a string
-    # @api public
-    def to_s
-      dte = self.time.strftime('%b %d %I:%M %P')
-      des = self.description
-      loc = self.location
-      "#{dte} #{des} #{loc}"
-    end
   end
 end
