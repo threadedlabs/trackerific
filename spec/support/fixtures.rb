@@ -6,6 +6,7 @@ module Fixtures
   def fixture_path
     File.join(File.dirname(__FILE__), "..", "fixtures")
   end
+
   # Loads a fixture
   # @param [Symbol] name the fixture to load
   # @param [Symbol] ext the exention of the fixture. defaults to :xml
@@ -17,4 +18,8 @@ module Fixtures
     file_name = File.join(fixture_path, "#{name.to_s}.#{ext.to_s}")
     File.read(file_name)
   end
+end
+
+RSpec.configure do |config|
+  config.include Fixtures
 end

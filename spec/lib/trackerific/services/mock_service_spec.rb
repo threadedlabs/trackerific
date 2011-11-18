@@ -1,56 +1,35 @@
 require 'spec_helper'
 
 describe Trackerific::MockService do
+  subject { Trackerific::MockService }
 
   specify("it should descend from Trackerific::Service") {
     Trackerific::MockService.superclass.should be Trackerific::Service
   }
-  
-  describe :required_parameters do
-    subject { Trackerific::MockService.required_parameters }
-    it { should be_empty }
+
+  it "should be able to to simualate tracking a package" do
+    subject.tracks?('XXXXXXXXXX').should be_true
   end
-  
-  describe :package_id_matchers do
-  
-    context "when in development or test mode" do
-      subject { Trackerific::MockService.package_id_matchers }
-      it("should be an Array of Regexp") { should each { |m| m.should be_a Regexp } }
-    end
-    
-    context "when in production mode" do
-      before { Rails.env = "production" }
-      subject { Trackerific::MockService.package_id_matchers }
-      it { should be_empty }
-      after { Rails.env = "test"}
-    end
+
+  it "should be able to simulate a bad tracking number" do
+    subject.tracks?('XXXxxxxxxx').should be_true
   end
-  
-  describe :track_package do
-    before(:all) do
-      @service = Trackerific::MockService.new
+
+  describe :track do
+    describe "When the tracking number is valid" do
+      subject { Trackerific::MockService.track 'XXXXXXXXXX' }
+
+      its(:package_id) { should eql('XXXXXXXXXX') }
+      its(:summary) { should eql('At door step') }
+      its(:events) { should be_a(Array) }
     end
-    
-    context "with valid package_id" do
-      before { @tracking = @service.track_package("XXXXXXXXXX") }
-      subject { @tracking }
-      it("should return a Trackerific::Details") { should be_a Trackerific::Details }
-      
-      describe "events.length" do
-        subject { @tracking.events.length }
-        it { should >= 1}
-      end
-      
-      describe :summary do
-        subject { @tracking.summary }
-        it { should_not be_empty }
+
+    describe "When the tracking number is invalid" do
+      it "should raise an error" do
+        lambda { 
+          subject.track('XXXxxxxxxx') 
+        }.should raise_error(Trackerific::UnknownPackageId, /invalid/)
       end
     end
-    
-    context "with invalid package_id" do
-      specify { lambda { @service.track_package("XXXxxxxxxx") }.should raise_error(Trackerific::Error) }
-    end
-    
   end
-  
 end

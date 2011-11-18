@@ -1,44 +1,48 @@
 require 'spec_helper'
 
 describe "Trackerific.configuration" do
-  include Trackerific
-  
-  subject { Trackerific.configuration }
-  it { should be_a Trackerific::Configuration }
-  
-  context "with valid options" do
-    it "should not raise any errors" do
-      lambda {
-        Trackerific.configure do |config|
-          config.usps :user_id => 'userid'
-        end
-      }.should_not raise_error
-    end
-    it "should save a valid option" do
-      Trackerific.configure do |config|
-        config.usps :user_id => 'userid'
-      end
-      Trackerific.configuration.usps[:user_id].should eq 'userid'
-    end
+  describe "Configuring UPS" do
+    subject { Trackerific.configuration.ups }
+
+    it { should respond_to(:key=) }
+    it { should respond_to(:key) }
+
+    it { should respond_to(:user_id=) }
+    it { should respond_to(:user_id) }
+
+    it { should respond_to(:password=) }
+    it { should respond_to(:password) }
+
+    it { should respond_to(:url=) }
+    it { should respond_to(:url) }
+
+    its(:url) { should eql('https://wwwcie.ups.com/ups.app/xml') }
   end
-  
-  context "with invalid options" do
-    it "should raise ArgumentError" do
-      lambda {
-        Trackerific.configure do |config|
-          config.usps :invalid => 'option'
-        end
-      }.should raise_error ArgumentError
-    end
+
+  describe "Configuring Fedex" do
+    subject { Trackerific.configuration.fedex }
+
+    it { should respond_to(:account=) }
+    it { should respond_to(:account) }
+
+    it { should respond_to(:meter=) }
+    it { should respond_to(:meter) }
+
+    it { should respond_to(:url=) }
+    it { should respond_to(:url) }
+
+    its(:url) { should eql('https://gateway.fedex.com/GatewayDC') }
   end
-  
-  context "with invalid configuration group - not a Trackerific:Service" do
-    it "should raise NoMethodError" do
-      lambda {
-        Trackerific.configure do |config|
-          config.qwertyuiop :invalid => 'group'
-        end
-      }.should raise_error(NoMethodError)
-    end
+
+  describe "Configuring USPS" do
+    subject { Trackerific.configuration.usps }
+
+    it { should respond_to(:user_id=) }
+    it { should respond_to(:user_id) }
+
+    it { should respond_to(:url=) }
+    it { should respond_to(:url) }
+
+    its(:url) { should eql('http://testing.shippingapis.com/ShippingAPITest.dll') }
   end
 end

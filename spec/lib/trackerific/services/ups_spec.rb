@@ -1,79 +1,70 @@
 require 'spec_helper'
-require 'fakeweb'
 
-UPS_TRACK_URL = 'https://wwwcie.ups.com/ups.app/xml/Track'
+describe Trackerific::UPS do
+  let(:package_id) { '1Z12345E0291980793' }
+  let(:config) { subject.config }
 
-describe "Trackerific::UPS" do
-  include Fixtures
-  
-  specify("it should descend from Trackerific::Service") {
-    Trackerific::UPS.superclass.should be Trackerific::Service
-  }
-  
-  describe :required_parameters do
-    subject { Trackerific::UPS.required_parameters }
-    it { should include(:key) }
-    it { should include(:user_id) }
-    it { should include(:password) }
+  subject { Trackerific::UPS }
+
+  it "should be able to track ups ground packages" do
+    subject.tracks?("1Z12345E0291980793").should be_true
   end
-  
-  describe :valid_options do
-    it "should include required_parameters" do
-      valid = Trackerific::UPS.valid_options
-      Trackerific::UPS.required_parameters.each do |opt|
-        valid.should include opt
-      end
+
+  describe "using the ups API" do
+    before(:each) do
+      config.key = 'a-key'
+      config.user_id = 'user-id'
+      config.password = 'the-password'
     end
-  end
-  
-  describe :package_id_matchers do
-    subject { Trackerific::UPS.package_id_matchers }
-    it("should be an Array of Regexp") { should each { |m| m.should be_a Regexp } }
-  end
-  
-  describe :track_package do
-    before(:all) do
-      @package_id = '1Z12345E0291980793'
-      @ups = Trackerific::UPS.new :key => 'testkey', :user_id => 'testuser', :password => 'secret'
+
+    let(:request) do
+      %Q{
+        <AccessRequest>
+          <AccessLicenseNumber>#{config.key}</AccessLicenseNumber>
+          <UserId>#{config.user_id}</UserId>
+          <Password>#{config.password}</Password>
+        </AccessRequest>
+        <TrackRequest>
+          <Request>
+            <RequestAction>Track</RequestAction>
+            <RequestOption>activity</RequestOption>
+          </Request>
+          <TrackingNumber>#{package_id}</TrackingNumber>
+        </TrackRequest>
+      }.split("\n").map(&:strip).join('')
     end
-    
-    context "with a successful response from the server" do
-      
-      before(:all) do
-        FakeWeb.register_uri(:post, UPS_TRACK_URL, :body => load_fixture(:ups_success_response))
-      end
-      
+
+    describe "When the server returns correctly" do
       before(:each) do
-        @tracking = @ups.track_package(@package_id)
+        stub_request(:post, "#{config.url}/Track").
+          with(:body => request).
+          to_return(:body => load_fixture(:ups_success_response))
       end
-      
-      subject { @tracking }
-      it("should return a Trackerific::Details") { should be_a Trackerific::Details }
-      
-      describe "events.length" do
-        subject { @tracking.events.length }
-        it { should >= 1 }
+
+      it "should assign the package id" do
+        results = Trackerific::UPS.new(package_id).track
+        results.package_id.should eql(package_id)
       end
-      
-      describe :summary do
-        subject { @tracking.summary }
-        it { should_not be_empty }
+
+      it "should parse all the events" do
+        results = Trackerific::UPS.new(package_id).track
+        results.events.size.should eql(1)
       end
-      
     end
-    
-    context "with an error response from the server" do
-      
-      before(:all) do
-        FakeWeb.register_uri(:post, UPS_TRACK_URL, :body => load_fixture(:ups_error_response))
+
+    describe "When the server returns an error" do
+      before(:each) do
+        stub_request(:post, "#{config.url}/Track").
+          with(:body => request).
+          to_return(:body => load_fixture(:ups_error_response))
       end
-      
-      specify { lambda { @ups.track_package("invalid package id") }.should raise_error(Trackerific::Error) }
-      
+
+      it "should raise an error" do
+        lambda { 
+          Trackerific::UPS.new(package_id).track
+        }.should raise_error(Trackerific::ServiceError)
+      end
     end
-    
-    pending "when server returns corrupted xml"
-    
   end
-  
+
 end

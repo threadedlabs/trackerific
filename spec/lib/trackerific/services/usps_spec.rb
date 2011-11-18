@@ -1,111 +1,63 @@
 require 'spec_helper'
-require 'fakeweb'
-
-USPS_URL = %r|http://testing\.shippingapis\.com/.*|
 
 describe Trackerific::USPS do
-  include Fixtures
-  
-  specify("it should descend from Trackerific::Service") {
-    Trackerific::USPS.superclass.should be Trackerific::Service
-  }
-  
-  describe :city_state_lookup do
-    
-    before(:all) do
-      @usps = Trackerific::USPS.new :user_id => '123USERID4567'
+  let(:package_id) { 'EJ958083578US' }
+  let(:config) { subject.config }
+
+  subject { Trackerific::USPS }
+
+  it "should be able to E-format packages" do
+    subject.tracks?("EJ958083578US").should be_true
+  end
+
+  it "should be able to track credit like package numbers" do
+    subject.tracks?("9102 9010 0134 3104 0819 19").should be_true
+  end
+
+  describe "using the ups API" do
+    before(:each) do
+      config.user_id = 'user-id'
     end
-    
-    context "with a successful response from the server" do
-      
-      before(:all) do
-        FakeWeb.register_uri(:get, USPS_URL, :body => load_fixture(:usps_city_state_lookup_response))
-      end
-      
+
+    let(:request) do
+      {
+        :API => 'TrackV2', 
+        :XML => %Q{
+          <TrackRequest USERID="#{config.user_id}">
+            <TrackID ID="#{package_id}"/>
+          </TrackRequest>
+        }.split("\n").map(&:strip).join('')
+      }.to_query
+    end
+
+    describe "When the server returns correctly" do
       before(:each) do
-        @lookup = @usps.city_state_lookup("90210")
+        stub_request(:get, "#{config.url}?#{request}").
+          to_return(:body => load_fixture(:usps_success_response))
       end
-      
-      subject { @lookup }
-      it { should include(:city) }
-      it { should include(:state) }
-      it { should include(:zip) }
-      
-    end
-    
-    context "with an error response from the server" do
-      
-      before(:all) do
-        FakeWeb.register_uri(:get, USPS_URL, :body => load_fixture(:usps_error_response))
+
+      it "should assign the package id" do
+        results = Trackerific::USPS.new(package_id).track
+        results.package_id.should eql(package_id)
       end
-      
-      specify { lambda { @usps.city_state_lookup("90210") }.should raise_error(Trackerific::Error) }
-      
-    end
-  end
-  
-  describe :track_package do
-    
-    before(:all) do
-      @package_id = 'EJ958083578US'
-      @usps = Trackerific::USPS.new :user_id => '123USERID4567'
-    end
-    
-    context "with a successful response from the server" do
-      
-      before(:all) do
-        FakeWeb.register_uri(:get, USPS_URL, :body => load_fixture(:usps_success_response))
+
+      it "should parse all the events" do
+        results = Trackerific::USPS.new(package_id).track
+        results.events.size.should eql(3)
       end
-      
+    end
+
+    describe "When the server returns an error" do
       before(:each) do
-        @tracking = @usps.track_package(@package_id)
+        stub_request(:get, "#{config.url}?#{request}").
+          to_return(:body => load_fixture(:usps_error_response))
       end
-      
-      subject { @tracking }
-      it("should return a Trackerific::Details") { should be_a Trackerific::Details }
-      
-      describe "events.length" do
-        subject { @tracking.events.length }
-        it { should >= 1 }
-      end
-      
-      describe :summary do
-        subject { @tracking.summary }
-        it { should_not be_empty }
-      end
-      
-    end
-    
-    pending "when use_city_state_lookup == true"
-    
-    context "with an error response from the server" do
-      
-      before(:all) do
-        FakeWeb.register_uri(:get, USPS_URL, :body => load_fixture(:usps_error_response))
-      end
-      
-      specify { lambda { @usps.track_package(@package_id) }.should raise_error(Trackerific::Error) }
-      
-    end
-  end
-  
-  describe :required_parameters do
-    subject { Trackerific::USPS.required_parameters }
-    it { should include(:user_id) }
-  end
-  
-  describe :valid_options do
-    it "should include required_parameters" do
-      valid = Trackerific::USPS.valid_options
-      Trackerific::USPS.required_parameters.each do |opt|
-        valid.should include opt
+
+      it "should raise an error" do
+        lambda { 
+          Trackerific::USPS.new(package_id).track
+        }.should raise_error(Trackerific::ServiceError, 'Missing value for To Phone number.')
       end
     end
   end
-  
-  describe :package_id_matchers do
-    subject { Trackerific::UPS.package_id_matchers }
-    it("should be an Array of Regexp") { should each { |m| m.should be_a Regexp } }
-  end
-  
 end

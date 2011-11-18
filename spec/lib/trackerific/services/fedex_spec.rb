@@ -1,76 +1,76 @@
 require 'spec_helper'
-require 'fakeweb'
 
-FEDEX_TRACK_URL = "https://gateway.fedex.com/GatewayDC"
+describe Trackerific::Fedex do
+  let(:package_id) { "183689015000001" }
+  let(:config) { subject.config }
 
-describe Trackerific::FedEx do
-  include Fixtures
-  
-  specify("it should descend from Trackerific::Service") {
-    Trackerific::FedEx.superclass.should be Trackerific::Service
-  }
-  
-  describe :required_parameters do
-    subject { Trackerific::FedEx.required_parameters }
-    it { should include(:account) }
-    it { should include(:meter) }
+  subject { Trackerific::Fedex }
+
+  it "should be able to track fedex ground packages" do
+    subject.tracks?("491428716545").should be_true
   end
-  
-  describe :valid_options do
-    it "should include required_parameters" do
-      valid = Trackerific::FedEx.valid_options
-      Trackerific::FedEx.required_parameters.each do |opt|
-        valid.should include opt
-      end
+
+  it "should be able to track fedex express packages" do
+    subject.tracks?("183689015000001").should be_true
+  end
+
+  describe "using the Fedex API" do
+    before(:each) do
+      config.meter = 'meter'
+      config.account = 'account-id'
     end
-  end
-  
-  describe :package_id_matchers do
-    subject { Trackerific::FedEx.package_id_matchers }
-    it("should be an Array of Regexp") { should each { |m| m.should be_a Regexp } }
-  end
-  
-  describe :track_package do
-    before(:all) do
-      @package_id = "183689015000001"
-      @fedex = Trackerific::FedEx.new :account  => "123456789", :meter => "123456789"
+
+    let(:request) do
+      %Q{
+        <?xml version="1.0" encoding="UTF-8"?>
+        <FDXTrack2Request xmlns:api="http://www.fedex.com/fsmapi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FDXTrack2Request.xsd">
+        <RequestHeader>
+          <AccountNumber>#{config.account}</AccountNumber>
+          <MeterNumber>#{config.meter}</MeterNumber>
+        </RequestHeader>
+        <PackageIdentifier>
+          <Value>#{package_id}</Value>
+        </PackageIdentifier>
+        <DetailScans>true</DetailScans>
+      </FDXTrack2Request>
+      }.split("\n").map(&:strip).join('')
     end
-    
-    context "with a successful response from the server" do
-      
-      before(:all) do
-        FakeWeb.register_uri(:post, FEDEX_TRACK_URL, :body => load_fixture(:fedex_success_response))
-      end
-      
+
+    describe "When the server returns correctly" do
       before(:each) do
-        @tracking = @fedex.track_package(@package_id)
+        stub_request(:post, config.url).
+          with(:body => request).
+          to_return(:body => load_fixture(:fedex_success_response))
       end
-      
-      subject { @tracking }
-      it("should return a Trackerific::Details") { should be_a Trackerific::Details }
-      
-      describe "events.length" do
-        subject { @tracking.events.length }
-        it { should >= 1}
+
+      it "should assign the package id" do
+        results = Trackerific::Fedex.new(package_id).track
+        results.package_id.should eql(package_id)
       end
-      
-      describe :summary do
-        subject { @tracking.summary }
-        it { should_not be_empty }
+
+      it "should assign the summary" do
+        results = Trackerific::Fedex.new(package_id).track
+        results.summary.should be_a(String)
       end
-      
+
+      it "should parse all the events" do
+        results = Trackerific::Fedex.new(package_id).track
+        results.events.size.should eql(4)
+      end
     end
-    
-    context "with an error response from the server" do
-      
-      before(:all) do
-        FakeWeb.register_uri(:post, FEDEX_TRACK_URL, :body => load_fixture(:fedex_error_response))
+
+    describe "When the server returns an error" do
+      before(:each) do
+        stub_request(:post, config.url).
+          with(:body => request).
+          to_return(:body => load_fixture(:fedex_error_response))
       end
-      
-      specify { lambda { @fedex.track_package("invalid package id") }.should raise_error(Trackerific::Error) }
-      
+
+      it "should raise an error" do
+        lambda { 
+          Trackerific::Fedex.new(package_id).track
+        }.should raise_error(Trackerific::ServiceError, 'Invalid tracking numbers.   Please check the following numbers and resubmit.')
+      end
     end
-    
   end
-  
 end
