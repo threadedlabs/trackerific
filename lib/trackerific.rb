@@ -23,7 +23,7 @@ module Trackerific
   #   Trackerific.service "183689015000001" # => Trackerific::FedEx
   # @api public
   def service(package_id)
-    match = [UPS, Fedex, USPS].select { |s| s.tracks? package_id }.first
+    match = [UPS, Fedex, USPS, MockService].select { |s| s.tracks? package_id }.first
 
     if match
        match
