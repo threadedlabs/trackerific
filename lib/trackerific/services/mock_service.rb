@@ -16,7 +16,8 @@ module Trackerific
 
       details = Trackerific::Package.new({
         :package_id => package_id,
-        :summary    => "At door step",
+        :delivered => true,
+        :out_for_delivery => true
       })
 
       details.events << Event.new({

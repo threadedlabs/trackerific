@@ -5,11 +5,12 @@ module Trackerific
     # @api private
     def initialize(details = {})
       @package_id = details[:package_id]
-      @summary = details[:summary]
       @events = details[:events]
       @weight = details[:weight] || nil
       @via = details[:via] || nil
       @estimated_arrival = details[:estimated_arrival]
+      @delivered = details[:delivered] || false
+      @out_for_delivery = details[:out_for_delivery] || false
     end
 
     # The package identifier
@@ -19,15 +20,6 @@ module Trackerific
     # @api public
     def package_id
       @package_id
-    end
-
-    # Summary of the package's tracking events
-    # @example Get the summary of a tracked package
-    #   details.summary # => Summary of the tracking events (i.e. Delivered)
-    # @return [String] a summary of the tracking status
-    # @api public
-    def summary
-      @summary
     end
 
     # The events for this package
@@ -66,8 +58,12 @@ module Trackerific
       @via
     end
 
-    def estimated_arrival
-      @estimated_arrival
+    def delivered
+      @delivered
+    end
+
+    def description
+      events.first.description
     end
   end
 end

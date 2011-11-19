@@ -20,8 +20,9 @@ describe Trackerific::MockService do
       subject { Trackerific::MockService.track 'XXXXXXXXXX' }
 
       its(:package_id) { should eql('XXXXXXXXXX') }
-      its(:summary) { should eql('At door step') }
+      its(:description) { should eql('Package delivered.') }
       its(:events) { should be_a(Array) }
+      its(:delivered) { should be_true }
     end
 
     describe "When the tracking number is invalid" do

@@ -36,11 +36,39 @@ describe Trackerific::Fedex do
       }.split("\n").map(&:strip).join('')
     end
 
-    describe "When the server returns correctly" do
+    describe "When the the package has been delivered" do
       before(:each) do
         stub_request(:post, config.url).
           with(:body => request).
-          to_return(:body => load_fixture(:fedex_success_response))
+          to_return(:body => load_fixture(:fedex_delivery_response))
+      end
+
+      it "should assign the package id" do
+        results = Trackerific::Fedex.new(package_id).track
+        results.package_id.should eql(package_id)
+      end
+
+      it "should set the description" do
+        package = Trackerific::Fedex.new(package_id).track
+        package.description.should eql('Delivered: Left at garage. Signature Service not requested.')
+      end
+
+      it "should parse all the events" do
+        results = Trackerific::Fedex.new(package_id).track
+        results.events.size.should eql(4)
+      end
+
+      it "should say the package has been delivered" do
+        package = Trackerific::Fedex.new(package_id).track
+        package.delivered.should be_true
+      end
+    end
+
+    describe "When the package is out for delivery" do
+      before(:each) do
+        stub_request(:post, config.url).
+          with(:body => request).
+          to_return(:body => load_fixture(:fedex_out_for_delivery_response))
       end
 
       it "should assign the package id" do
@@ -49,13 +77,13 @@ describe Trackerific::Fedex do
       end
 
       it "should assign the summary" do
-        results = Trackerific::Fedex.new(package_id).track
-        results.summary.should be_a(String)
+        package = Trackerific::Fedex.new(package_id).track
+        package.description.should eql('On FedEx vehicle for delivery')
       end
 
-      it "should parse all the events" do
-        results = Trackerific::Fedex.new(package_id).track
-        results.events.size.should eql(4)
+      it "should not say the package has been delivered" do
+        package = Trackerific::Fedex.new(package_id).track
+        package.delivered.should be_false
       end
     end
 

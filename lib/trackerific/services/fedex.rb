@@ -55,7 +55,14 @@ module Trackerific
 
       details["Event"].each do |e|
         date = Time.parse("#{e["Date"]} #{e["Time"]}")
-        desc = e["Description"]
+
+        if e['StatusExceptionDescription']
+          desc = %Q{#{e["Description"]}: #{e['StatusExceptionDescription']}}
+        else
+          desc = e['Description']
+        end
+
+
         addr = e["Address"]
 
         if addr
@@ -70,12 +77,14 @@ module Trackerific
           :location     => location
         )
       end
+
+      attributes = { :events => events }
+      attributes[:package_id] = details['TrackingNumber']
+      attributes[:delivered] = details['StatusCode'] == 'DL'
+      attributes[:out_for_delivery] = details['StatusCode'] == 'OD'
+
       # Return a Trackerific::Details containing all the events
-      Trackerific::Package.new(
-        :package_id => details["TrackingNumber"],
-        :summary    => details["StatusDescription"],
-        :events     => events
-      )
+      Trackerific::Package.new attributes
     end
   end
 end

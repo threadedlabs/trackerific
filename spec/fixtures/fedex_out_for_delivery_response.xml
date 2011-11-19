@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FDXTrack2Reply xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <DuplicateWaybill>false</DuplicateWaybill>
+   <MoreData>false</MoreData>
+   <Package>
+      <TrackingNumber>183689015000001</TrackingNumber>
+      <TrackingNumberUniqueIdentifier>12010~183689015000001</TrackingNumberUniqueIdentifier>
+      <StatusCode>OD</StatusCode>
+      <StatusDescription>Out for Delivery</StatusDescription>
+      <CarrierCode>FDXG</CarrierCode>
+      <OtherIdentifier>
+         <Value>770-886-6395</Value>
+         <Type>CUR</Type>
+      </OtherIdentifier>
+      <Service>FedEx Home Delivery</Service>
+      <Weight>19.8</Weight>
+      <WeightUnits>LBS</WeightUnits>
+      <PackagingDescription>Package</PackagingDescription>
+      <PackageSequenceNumber>1</PackageSequenceNumber>
+      <PackageCount>1</PackageCount>
+      <OriginLocationAddress>
+         <City>ANAHEIM</City>
+         <StateOrProvinceCode>CA</StateOrProvinceCode>
+         <CountryCode>US</CountryCode>
+      </OriginLocationAddress>
+      <ShipDate>2010-06-25</ShipDate>
+      <DestinationAddress>
+         <City>Gainesville</City>
+         <StateOrProvinceCode>GA</StateOrProvinceCode>
+         <CountryCode>US</CountryCode>
+      </DestinationAddress>
+      <SignatureProofOfDeliveryAvailable>false</SignatureProofOfDeliveryAvailable>
+      <Event>
+         <Date>2010-07-01</Date>
+         <Time>08:48:00</Time>
+         <Type>OD</Type>
+         <Description>On FedEx vehicle for delivery</Description>
+         <Address>
+            <City>ATHENS</City>
+            <StateOrProvinceCode>GA</StateOrProvinceCode>
+            <PostalCode>30601</PostalCode>
+            <CountryCode>US</CountryCode>
+         </Address>
+      </Event>
+      <Event>
+         <Date>2010-07-01</Date>
+         <Time>05:07:00</Time>
+         <Type>AR</Type>
+         <Description>At local FedEx facility</Description>
+         <Address>
+            <City>ATHENS</City>
+            <StateOrProvinceCode>GA</StateOrProvinceCode>
+            <PostalCode>30601</PostalCode>
+            <CountryCode>US</CountryCode>
+         </Address>
+      </Event>
+      <Event>
+        <Date>2011-11-01</Date>
+        <Time>00:36:08</Time>
+        <Type>OC</Type>
+        <Description>Shipment information sent to FedEx</Description>
+      </Event>
+   </Package>
+</FDXTrack2Reply>

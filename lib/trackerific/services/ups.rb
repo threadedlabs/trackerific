@@ -58,9 +58,6 @@ module Trackerific
       # if there's only one activity in the list, we need to put it in an array
       activity = [activity] if activity.is_a? Hash
 
-      # UPS does not provide a summary, so we'll just use the last tracking status
-      summary = activity.first['Status']['StatusType']['Description'].titleize
-
       events = []
 
       activity.each do |a|
@@ -82,8 +79,8 @@ module Trackerific
 
       Package.new(
         :package_id => package_id,
-        :summary    => summary,
-        :events     => events
+        :events     => events,
+        :delivered  => activity.first['Status']['StatusType']['Code'] == 'D'
       )
     end
   end

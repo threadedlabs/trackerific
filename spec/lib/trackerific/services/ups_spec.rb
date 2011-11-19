@@ -34,21 +34,31 @@ describe Trackerific::UPS do
       }.split("\n").map(&:strip).join('')
     end
 
-    describe "When the server returns correctly" do
+    describe "When the server returns a delivery response" do
       before(:each) do
         stub_request(:post, "#{config.url}/Track").
           with(:body => request).
-          to_return(:body => load_fixture(:ups_success_response))
+          to_return(:body => load_fixture(:ups_delivery_response))
       end
 
       it "should assign the package id" do
-        results = Trackerific::UPS.new(package_id).track
-        results.package_id.should eql(package_id)
+        package = Trackerific::UPS.new(package_id).track
+        package.package_id.should eql(package_id)
       end
 
       it "should parse all the events" do
-        results = Trackerific::UPS.new(package_id).track
-        results.events.size.should eql(1)
+        package = Trackerific::UPS.new(package_id).track
+        package.events.size.should eql(1)
+      end
+
+      it "should set the description" do
+        package = Trackerific::UPS.new(package_id).track
+        package.description.should eql('Delivered')
+      end
+
+      it "should should say the package is delivered" do
+        package = Trackerific::UPS.new(package_id).track
+        package.delivered.should be_true
       end
     end
 
