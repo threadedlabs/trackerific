@@ -1,5 +1,5 @@
 module Trackerific
-  class USPS < Trackerific::Service
+  class USPS < Service
     REGEXES = [
       /^E\D{1}\d{9}\D{2}$|^9\d{15,21}$/,
       /^\d{4}\s\d{4}\s\d{4}\s\d{4}\s\d{4}\s\d{2}$/
@@ -23,14 +23,14 @@ module Trackerific
       events = []
 
       tracking_info['TrackDetail'].each do |d|
-        events << Trackerific::Event.new(
+        events << Event.new(
           :date         => date_of_event(d),
           :description  => description_of_event(d).capitalize,
           :location     => location_of_event(d)
         )
       end unless tracking_info['TrackDetail'].nil?
 
-      Details.new(
+      Package.new(
         :package_id => tracking_info['ID'],
         :summary    => tracking_info['TrackSummary'],
         :events     => events

@@ -1,13 +1,16 @@
 require 'spec_helper'
 
-describe Trackerific::Details do
+describe Trackerific::Package do
+  let(:one_week_from_now) { Time.now + 60*60*24*7 }
+
   subject do
-    Trackerific::Details.new({
+    Trackerific::Package.new({
       :package_id => '123456789',
       :summary => 'delivered',
       :events => [],
       :weight => '45kg',
-      :via => 'ground'
+      :via => 'ground',
+      :estimated_arrival => one_week_from_now
     })
   end
 
@@ -20,4 +23,6 @@ describe Trackerific::Details do
   its(:weight) { should eql('45kg') }
 
   its(:via) { should eql('ground') }
+
+  its(:estimated_arrival) { should eql(one_week_from_now) }
 end

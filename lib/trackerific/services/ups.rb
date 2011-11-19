@@ -1,5 +1,5 @@
 module Trackerific
-  class UPS < Trackerific::Service
+  class UPS < Service
     REGEXES = [
        /^.Z/, 
        /^[HK].{10}$/ 
@@ -44,9 +44,9 @@ module Trackerific
       code = response['TrackResponse']['Response']['ResponseStatusCode']
 
       if code == "0"
-        raise Trackerific::ServiceError, response['TrackResponse']['Response']['Error']['ErrorDescription']
+        raise ServiceError, response['TrackResponse']['Response']['Error']['ErrorDescription']
       elsif code != "1"
-        raise Trackerific::ServiceError, "Invalid response code returned from server."
+        raise ServiceError, "Invalid response code returned from server."
       end
     end
 
@@ -73,14 +73,14 @@ module Trackerific
         date    = DateTime.parse("#{date} #{hours}:#{minutes}:#{seconds}")
         desc    = a['Status']['StatusType']['Description'].titleize
         loc     = a['ActivityLocation']['Address'].map {|k,v| v}.join(" ")
-        events << Trackerific::Event.new(
+        events << Event.new(
           :date         => date,
           :description  => desc,
           :location     => loc
         )
       end
 
-      Trackerific::Details.new(
+      Package.new(
         :package_id => package_id,
         :summary    => summary,
         :events     => events

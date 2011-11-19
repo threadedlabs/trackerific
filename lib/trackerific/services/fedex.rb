@@ -1,5 +1,5 @@
 module Trackerific
-  class Fedex < Trackerific::Service
+  class Fedex < Service
     REGEXES = [ 
       /^[0-9]{15}$/, 
       /^[0-9]{12}/
@@ -71,7 +71,7 @@ module Trackerific
         )
       end
       # Return a Trackerific::Details containing all the events
-      Trackerific::Details.new(
+      Trackerific::Package.new(
         :package_id => details["TrackingNumber"],
         :summary    => details["StatusDescription"],
         :events     => events

@@ -1,7 +1,5 @@
 module Trackerific
-  # Details returned when tracking a package. Stores the package identifier,
-  # a summary, and the events.
-  class Details
+  class Package
     # Provides a new instance of Details
     # @param [Hash] details The details for this package
     # @api private
@@ -11,6 +9,7 @@ module Trackerific
       @events = details[:events]
       @weight = details[:weight] || nil
       @via = details[:via] || nil
+      @estimated_arrival = details[:estimated_arrival]
     end
 
     # The package identifier
@@ -65,6 +64,10 @@ module Trackerific
     # @api public
     def via
       @via
+    end
+
+    def estimated_arrival
+      @estimated_arrival
     end
   end
 end
