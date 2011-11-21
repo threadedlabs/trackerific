@@ -1,8 +1,10 @@
+require 'nokogiri'
 require 'trackerific/configuration'
 require 'trackerific/service'
 require 'trackerific/errors'
 require 'trackerific/package'
 require 'trackerific/event'
+require 'trackerific/parsers'
 require 'active_support/core_ext/string/inflections'
 require 'active_support/core_ext/object/to_query'
 

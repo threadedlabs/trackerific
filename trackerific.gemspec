@@ -28,6 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'builder'
   gem.add_dependency 'activesupport', '>= 3.0.0'
   gem.add_dependency 'i18n'
+  gem.add_dependency 'nokogiri'
 
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec'
