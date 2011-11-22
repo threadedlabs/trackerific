@@ -8,6 +8,7 @@ describe Trackerific do
       Trackerific::USPS.stub(:tracks?).with('package-id').and_return(false)
       Trackerific::Fedex.stub(:tracks?).with('package-id').and_return(false)
       Trackerific::UPS.stub(:tracks?).with('package-id').and_return(true)
+      Trackerific::Ontrac.stub(:tracks?).with('package-id').and_return(false)
 
       subject.service('package-id').should eql(Trackerific::UPS)
     end
@@ -16,6 +17,7 @@ describe Trackerific do
       Trackerific::USPS.stub(:tracks?).with('package-id').and_return(false)
       Trackerific::Fedex.stub(:tracks?).with('package-id').and_return(false)
       Trackerific::UPS.stub(:tracks?).with('package-id').and_return(false)
+      Trackerific::Ontrac.stub(:tracks?).with('package-id').and_return(false)
 
       subject.service('package-id').should be_nil
     end

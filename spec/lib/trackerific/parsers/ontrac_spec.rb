@@ -5,11 +5,7 @@ describe Trackerific::Parsers::Ontrac do
 
   subject { Trackerific::Parsers::Ontrac.new html }
 
-  its(:delivery_description) { should eql('fd') }
-
   its(:delivery_status) { should eql('DELIVERED') }
-
-  its(:delivery_time) { should eql('10/29/2011 1:59 PM') }
 
   describe "The history" do
     subject { Trackerific::Parsers::Ontrac.new(html).history }

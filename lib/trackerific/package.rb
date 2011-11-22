@@ -8,7 +8,6 @@ module Trackerific
       @events = details[:events]
       @weight = details[:weight] || nil
       @via = details[:via] || nil
-      @estimated_arrival = details[:estimated_arrival]
       @delivered = details[:delivered] || false
       @out_for_delivery = details[:out_for_delivery] || false
     end
@@ -60,6 +59,10 @@ module Trackerific
 
     def delivered
       @delivered
+    end
+
+    def out_for_delivery
+      @out_for_delivery
     end
 
     def description

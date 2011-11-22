@@ -3,10 +3,6 @@ require 'spec_helper'
 describe Trackerific::MockService do
   subject { Trackerific::MockService }
 
-  specify("it should descend from Trackerific::Service") {
-    Trackerific::MockService.superclass.should be Trackerific::Service
-  }
-
   it "should be able to to simualate tracking a package" do
     subject.tracks?('XXXXXXXXXX').should be_true
   end

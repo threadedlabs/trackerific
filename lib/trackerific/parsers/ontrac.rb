@@ -7,16 +7,8 @@ module Trackerific
         @doc = Nokogiri::HTML.parse(html)
       end
 
-      def delivery_description
-        info[:delivery_description]
-      end
-
       def delivery_status
         info[:delivery_status]
-      end
-
-      def delivery_time
-        info[:delivery_time]
       end
 
       def history

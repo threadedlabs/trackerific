@@ -1,10 +1,12 @@
 require 'nokogiri'
+require 'mechanize'
 require 'trackerific/configuration'
 require 'trackerific/service'
 require 'trackerific/errors'
 require 'trackerific/package'
 require 'trackerific/event'
 require 'trackerific/parsers'
+require 'trackerific/fetchers'
 require 'active_support/core_ext/string/inflections'
 require 'active_support/core_ext/object/to_query'
 
@@ -25,7 +27,7 @@ module Trackerific
   #   Trackerific.service "183689015000001" # => Trackerific::FedEx
   # @api public
   def service(package_id)
-    match = [UPS, Fedex, USPS, MockService].select { |s| s.tracks? package_id }.first
+    match = [UPS, Fedex, USPS, Ontrac, MockService].select { |s| s.tracks? package_id }.first
 
     if match
        match
