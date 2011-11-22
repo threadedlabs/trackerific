@@ -11,8 +11,8 @@ describe Trackerific::Package do
       :events => [event],
       :weight => '45kg',
       :via => 'ground',
-      :estimated_arrival => one_week_from_now,
-      :delivered => true
+      :delivered => true,
+      :out_for_delivery => true,
     })
   end
 
@@ -22,9 +22,7 @@ describe Trackerific::Package do
 
   its(:events) { should eql([event]) }
 
-  its(:weight) { should eql('45kg') }
-
-  its(:via) { should eql('ground') }
-
   its(:delivered) { should be_true }
+
+  its(:out_for_delivery) { should be_true }
 end

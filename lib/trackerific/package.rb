@@ -6,8 +6,6 @@ module Trackerific
     def initialize(details = {})
       @package_id = details[:package_id]
       @events = details[:events]
-      @weight = details[:weight] || nil
-      @via = details[:via] || nil
       @delivered = details[:delivered] || false
       @out_for_delivery = details[:out_for_delivery] || false
     end
@@ -34,27 +32,6 @@ module Trackerific
     # @api public
     def events
       @events ||= []
-    end
-
-    # The weight of the package (may not be supported by all services)
-    # @example Get the weight of a package
-    #   details.weight[:weight] # => the weight
-    #   details.weight[:units]  # => the units of measurement for the weight (i.e. "LBS")
-    # @return [Hash] Example: { units: 'LBS', weight: 19.1 }
-    # @api public
-    def weight
-      @weight
-    end
-
-    # Example: UPS 2ND DAY AIR. May not be supported by all services
-    # @example Get how the package was shipped
-    #   ups = Trackerific::UPS.new :user_id => "userid"
-    #   details = ups.track_package "1Z12345E0291980793"
-    #   details.via # => "UPS 2ND DAY AIR"
-    # @return [String] The service used to ship the package
-    # @api public
-    def via
-      @via
     end
 
     def delivered
