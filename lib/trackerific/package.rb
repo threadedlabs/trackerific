@@ -43,7 +43,7 @@ module Trackerific
     end
 
     def description
-      events.first.description
+      events.last.description
     end
   end
 end

@@ -20,9 +20,9 @@ module Trackerific
         :out_for_delivery => true
       })
 
-      details.events << Event.new(format_time, "Package delivered", "Santa Maria, CA")
-      details.events << Event.new(format_time(Time.now - (60*60*24*2)), "Packaged scanned", "Santa Barbara, CA")
       details.events << Event.new(format_time(Time.now - (60*60*24*5)), "Picked up", "Los Angeles CA")
+      details.events << Event.new(format_time(Time.now - (60*60*24*2)), "Packaged scanned", "Santa Barbara, CA")
+      details.events << Event.new(format_time, "Package delivered", "Santa Maria, CA")
 
       details
     end

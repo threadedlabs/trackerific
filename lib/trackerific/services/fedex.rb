@@ -53,15 +53,14 @@ module Trackerific
 
       events = []
 
-      details["Event"].each do |e|
-        date = "#{e["Date"]} #{e["Time"]}"
+      details["Event"].reverse.each do |e|
+        date = "#{e["Date"]} #{e["Time"].split(":")[0..1].join(":")}"
 
         if e['StatusExceptionDescription']
           desc = %Q{#{e["Description"]}: #{e['StatusExceptionDescription']}}
         else
           desc = e['Description']
         end
-
 
         addr = e["Address"]
 
