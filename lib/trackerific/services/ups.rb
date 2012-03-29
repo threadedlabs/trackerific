@@ -60,14 +60,16 @@ module Trackerific
 
       events = []
 
-      activity.each do |a|
+      activity.reverse.each do |a|
         hours   = a['Time'][0..1]
         minutes = a['Time'][2..3]
         seconds = a['Time'][4..5]
+        date = a['Date'].match(/(\d{4})(\d{2})(\d{2})/)
+
         desc    = a['Status']['StatusType']['Description'].titleize
         loc     = a['ActivityLocation']['Address'].map {|k,v| v}.join(" ")
 
-        events << Event.new("#{a['Date']} #{hours}:#{minutes}", desc, loc)
+        events << Event.new("#{date[1]}-#{date[2]}-#{date[3]} #{hours}:#{minutes}", desc, loc)
       end
 
       Package.new(
