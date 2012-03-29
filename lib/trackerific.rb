@@ -1,23 +1,26 @@
-require 'nokogiri'
-require 'mechanize'
-require 'trackerific/configuration'
-require 'trackerific/service'
-require 'trackerific/errors'
-require 'trackerific/package'
-require 'trackerific/event'
-require 'trackerific/parsers'
-require 'trackerific/fetchers'
 require 'active_support/core_ext/string/inflections'
 require 'active_support/core_ext/object/to_query'
 
-# require all the Trackerific services
-services_path = File.join(File.dirname(__FILE__), "trackerific", "services", "**", "*.rb")
-Dir[File.expand_path(services_path)].each { |file| require file }
+require 'nokogiri'
+require 'mechanize'
 
-# Trackerific provides package tracking to Rails apps.
+require 'trackerific/configuration'
+require 'trackerific/package'
+require 'trackerific/service'
+require 'trackerific/services/fedex'
+require 'trackerific/services/mock_service'
+require 'trackerific/services/ontrac'
+require 'trackerific/services/ups'
+require 'trackerific/services/usps'
+
+require 'trackerific/parsers/ontrac'
+require 'trackerific/fetchers/ontrac'
+
 module Trackerific
+  class Event < Struct.new(:time, :description, :location) ; end 
 
-  extend self
+  class UnknownPackageId < RuntimeError ; end
+  class ServiceError < RuntimeError ; end
 
   # Checks a string for a valid package tracking service
   # @param [String] package_id the package identifier
@@ -26,7 +29,7 @@ module Trackerific
   # @example Find out which service provider will track a valid FedEx number
   #   Trackerific.service "183689015000001" # => Trackerific::FedEx
   # @api public
-  def service(package_id)
+  def self.service(package_id)
     match = [UPS, Fedex, USPS, Ontrac, MockService].select { |s| s.tracks? package_id }.first
 
     if match
@@ -49,7 +52,7 @@ module Trackerific
   #
   #   details = Trackerific.track "183689015000001"
   # @api public
-  def track(package_id)
+  def self.track(package_id)
     tracker = service package_id
 
     raise Trackerific::UnknownPackageId, "Cannot find a service to track package id #{package_id}" unless tracker

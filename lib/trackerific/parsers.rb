@@ -1,1 +1,0 @@
-require 'trackerific/parsers/ontrac'
