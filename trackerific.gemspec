@@ -6,23 +6,21 @@ Gem::Specification.new do |gem|
   gem.name = %q{trackerific}
   gem.version = Trackerific::VERSION
 
-  gem.authors = ["Travis Haynes"]
+  gem.authors = ["Adam Hawkins"]
+  gem.email = %q{me@broadcastingadam.com}
+
   gem.date = Time.now.strftime('%Y-%m-%d')
-  gem.description = %q{Package tracking made easy for Rails. Currently supported services include FedEx, UPS, and USPS.}
-  gem.email = %q{travis.j.haynes@gmail.com}
-  gem.extra_rdoc_files = [
-    "LICENSE.txt",
-    "README.rdoc"
-  ]
+  gem.description = %q{No nonense package tracking for Ruby. UPS, Fedex, USPS and more supported}
+  gem.summary = ""
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
 
-  gem.homepage = %q{http://github.com/travishaynes/trackerific}
+  gem.homepage = %q{http://github.com/threadedlabs/trackerific}
+
   gem.licenses = ["MIT"]
   gem.require_paths = ["lib"]
-  gem.summary = %q{Trackerific provides package tracking.}
 
   gem.add_dependency 'httparty'
   gem.add_dependency 'builder'
@@ -35,6 +33,4 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'webmock'
-  gem.add_development_dependency 'ruby-debug19'
-  gem.add_development_dependency 'yardstick'
 end
