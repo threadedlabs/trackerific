@@ -2,6 +2,12 @@
 
 No nonsense package tracking for Ruby.
 
+Implemented services:
+
+* UPS
+* Fedex
+* USPS
+* Ontrac
 
 ## Configuration
 
