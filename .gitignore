@@ -6,3 +6,4 @@ measurement
 coverage
 doc
 Gemfile.lock
+.rspec
