@@ -22,12 +22,8 @@ module Trackerific
       tracking_info = response['TrackResponse']['TrackInfo']
       events = []
 
-      tracking_info['TrackDetail'].each do |d|
-        events << Event.new(
-          :date         => date_of_event(d),
-          :description  => description_of_event(d).capitalize,
-          :location     => location_of_event(d)
-        )
+      tracking_info['TrackDetail'].reverse.each do |d|
+        events << Event.new(date_of_event(d), description_of_event(d).capitalize, location_of_event(d))
       end unless tracking_info['TrackDetail'].nil?
 
       Package.new(
@@ -58,8 +54,8 @@ module Trackerific
     def date_of_event(event)
       # get the date out of
       # Mon DD HH:MM am/pm THE DESCRIPTION CITY STATE ZIP.
-      d = event.split(" ")
-      DateTime.parse(d[0..3].join(" "))
+      d = event.split " "
+      d[0..3].join " "
     end
 
     # Parses a USPS tracking event, and returns its description

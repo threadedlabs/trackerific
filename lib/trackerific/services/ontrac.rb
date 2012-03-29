@@ -14,10 +14,8 @@ module Trackerific
       attributes[:out_for_delivery] = info.delivery_status.eql?('OUT FOR DELIVERY')
       attributes[:package_id] = package_id
 
-      attributes[:events] = info.history.map do |event|
-        Event.new :time => event.timestamp, 
-          :description => event.description, 
-          :location => event.location
+      attributes[:events] = info.history.collect do |event|
+        Event.new event.timestamp, event.description, event.location
       end
 
       Package.new attributes

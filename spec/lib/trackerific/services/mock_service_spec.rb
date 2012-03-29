@@ -16,7 +16,7 @@ describe Trackerific::MockService do
       subject { Trackerific::MockService.track 'XXXXXXXXXX' }
 
       its(:package_id) { should eql('XXXXXXXXXX') }
-      its(:description) { should eql('Package delivered.') }
+      its(:description) { should eql('Package delivered') }
       its(:events) { should be_a(Array) }
       its(:delivered) { should be_true }
     end

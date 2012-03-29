@@ -54,7 +54,7 @@ module Trackerific
       events = []
 
       details["Event"].each do |e|
-        date = Time.parse("#{e["Date"]} #{e["Time"]}")
+        date = "#{e["Date"]} #{e["Time"]}"
 
         if e['StatusExceptionDescription']
           desc = %Q{#{e["Description"]}: #{e['StatusExceptionDescription']}}
@@ -71,11 +71,7 @@ module Trackerific
           location = 'Unknown'
         end
 
-        events << Trackerific::Event.new(
-          :time         => date,
-          :description  => desc,
-          :location     => location
-        )
+        events << Trackerific::Event.new(date, desc, location)
       end
 
       attributes = { :events => events }
