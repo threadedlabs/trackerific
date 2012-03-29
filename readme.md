@@ -1,5 +1,7 @@
 # Trackerific
 
+[![Build Status](https://secure.travis-ci.org/threadedlabs/trackerific.png)](http://travis-ci.org/threadedlabs/trackerific)
+
 No nonsense package tracking for Ruby.
 
 Implemented services:
