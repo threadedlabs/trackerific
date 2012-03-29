@@ -1,32 +1,9 @@
-require 'httparty'
-require 'builder'
-
 module Trackerific
-  # Base class for Trackerific services
   class Service
-
-    # Returns true if the service can track the specific tracking number
-    # @return Boolean
     def self.tracks?(package_id)
 
     end
 
-    # Gets the tracking information for the package from the server
-    # @param [String] package_id the package identifier
-    # @return [Trackerific::Details] the tracking details
-    # @example Override this method in your custom tracking service to implement tracking
-    #   module Trackerific
-    #     class MyTrackingService < Trackerific::Service
-    #       def track_package
-    #         # your tracking code here
-    #         Trackerific::Details.new(
-    #           "summary of tracking events",
-    #           [Trackerific::Event.new(Time.now, "summary", "location")]
-    #         )
-    #       end
-    #     end
-    #   end
-    # @api semipublic
     def self.track(package_id)
       new(package_id).track
     end

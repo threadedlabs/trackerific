@@ -1,3 +1,6 @@
+require 'httparty'
+require 'builder'
+
 module Trackerific
   class UPS < Service
     REGEXES = [

@@ -1,3 +1,6 @@
+require 'httparty'
+require 'builder'
+
 module Trackerific
   class USPS < Service
     REGEXES = [
@@ -33,24 +36,14 @@ module Trackerific
       )
     end
 
-    # Checks a HTTParty response for USPS, or HTTP errors
-    # @param [HTTParty::Response] response The HTTParty response to check
-    # @return The exception to raise, or nil
-    # @api private
     def check_for_errors!(response)
-      # return any HTTP errors
       return response.error unless response.code == 200
 
-      # return a Trackerific::Error if there is an error in the response, or if
-      # the tracking response is malformed
       raise ServiceError, response['Error']['Description'] unless response['Error'].nil?
       raise ServiceError, "Tracking information not found in response from server." if response['TrackResponse'].nil?
     end
 
-    # Parses a USPS tracking event, and returns its date
-    # @param [String] event The tracking event to parse
-    # @return [DateTime] The date / time of the event
-    # @api private
+    private
     def date_of_event(event)
       # get the date out of
       # Mon DD HH:MM am/pm THE DESCRIPTION CITY STATE ZIP.
@@ -58,21 +51,12 @@ module Trackerific
       d[0..3].join " "
     end
 
-    # Parses a USPS tracking event, and returns its description
-    # @param [String] event The tracking event to parse
-    # @return [DateTime] The description of the event
-    # @api private
     def description_of_event(event)
       # get the description out of
       # Mon DD HH:MM am/pm THE DESCRIPTION CITY STATE ZIP.
       d = event.split(" ")
       d[4..d.length-4].join(" ").capitalize
     end
-
-    # Parses a USPS tracking event, and returns its location
-    # @param [String] event The tracking event to parse
-    # @return The location of the event
-    # @api private
     def location_of_event(event)
       # remove periods, and split by spaces
       d = event.gsub(".", "").split(" ")
@@ -92,12 +76,12 @@ module Trackerific
     # @api private
     def build_tracking_xml_request
       xml = ""
-  
+
       builder = ::Builder::XmlMarkup.new :target => xml 
       builder.TrackRequest :USERID => config.user_id do |t|
         t.TrackID :ID => package_id
       end
- 
+
       xml
     end
   end
